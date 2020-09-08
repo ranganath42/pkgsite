@@ -38,6 +38,7 @@ var (
 		{
 			Name:         tabDoc,
 			DisplayName:  "Doc",
+			AlwaysShowDetails: true,
 			TemplateName: "pkg_doc.tmpl",
 		},
 		{

@@ -47,11 +47,14 @@ var (
 func main() {
 	flag.Parse()
 	ctx := context.Background()
+	log.Infof(ctx, "proxyURL: %s", *proxyURL)
+	log.Infof(ctx, "directProxy: %t", *directProxy)
+
 	cfg, err := config.Init(ctx)
 	if err != nil {
 		log.Fatal(ctx, err)
 	}
-	//cfg.Dump(os.Stderr)
+	cfg.Dump(os.Stderr)
 	if cfg.UseProfiler {
 		if err := profiler.Start(profiler.Config{}); err != nil {
 			log.Fatalf(ctx, "profiler.Start: %v", err)
@@ -62,6 +65,8 @@ func main() {
 		expg       func(context.Context) internal.ExperimentSource
 		fetchQueue queue.Queue
 	)
+
+
 	proxyClient, err := proxy.New(*proxyURL)
 	if err != nil {
 		log.Fatal(ctx, err)
@@ -168,10 +173,6 @@ func main() {
 		middleware.Experiment(experimenter),
 	)
 	addr := cfg.HostAddr("localhost:8080")
-
-	log.Infof(ctx, "Final configuration:")
-	cfg.Dump(os.Stderr)
-
 	log.Infof(ctx, "Listening on addr %s", addr)
 	log.Fatal(ctx, http.ListenAndServe(addr, mw(router)))
 }
